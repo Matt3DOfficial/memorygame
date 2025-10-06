@@ -10,13 +10,15 @@ document.body.appendChild(renderer.domElement);
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const material = new THREE.MeshBasicMaterial({color : 0x00ff00});
 const cube = new THREE.Mesh(geometry, material);
+
+const newcube = new THREE.Mesh(geometry, material);
 scene.add(cube);
-
+scene.add(newcube);
 camera.position.z = 5;
-
+newcube.position.x = 2;
 function animate() {
-    cube.rotation.x += 0.05;
-    cube.rotation.y += 0.05;
+    cube.rotation.x += 0.01
+    cube.rotation.y += 0.01;
     renderer.render(scene, camera);
 };
 renderer.setAnimationLoop(animate);
