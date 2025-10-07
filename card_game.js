@@ -7,18 +7,42 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry(1, 1, 1);
+const geometry = new THREE.BoxGeometry(1, 1.4, 0.1);
 const material = new THREE.MeshBasicMaterial({color : 0x00ff00});
-const cube = new THREE.Mesh(geometry, material);
+const cardsAmount = 5
+const maxCardRows = 5
+const cardArray = new Array(cardsAmount)
+let posY = 0
+let currentIndex = 0
+function cardSystem() {
+    for (let i = 0; i < maxCardRows; i++) {
+        cardSpawner()
+        posY -= 2
+    }
+}
 
-const newcube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-scene.add(newcube);
-camera.position.z = 5;
-newcube.position.x = 2;
+function cardSpawner() {
+    let posX = 0
+    for (let i = 0; i < Math.floor(cardsAmount / maxCardRows); i++) {
+        currentIndex++
+        function addCardToFirstArray() {
+        cardArray[currentIndex] = new THREE.Mesh(geometry, material);
+        scene.add(cardArray[currentIndex]);
+        cardArray[currentIndex].position.x = posX
+        cardArray[currentIndex].position.y = posY
+        posX += 1.5
+        };
+        addCardToFirstArray();
+    };
+}
+
+cardSystem()
+
+
+camera.position.z = 20;
+camera.position.x = 7.1
 function animate() {
-    cube.rotation.x += 0.01
-    cube.rotation.y += 0.01;
+    cardArray[1].rotation.x += 0.1
     renderer.render(scene, camera);
 };
 renderer.setAnimationLoop(animate);
