@@ -9,11 +9,29 @@
   z-index: 100;
 }
 
+@font-face {
+    font-family: gameFont;
+    src: url(Chomsky.otf);
+}
+
 #score {
+  display: flex;
   background-color: rgb(223, 223, 223);
   margin: auto;
   width: 50%;
+  align-self: center;
   margin-top: 50px;
   border-radius: 10px;
   flex-direction: row;
+  padding: 2.5vb;
+  font-family: 'gameFont';
+  font-size: xx-large;
+}
+
+#timer {
+    margin-left: 8vb;
+}
+
+#flips {
+    margin-left: 70vb;
 }
