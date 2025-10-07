@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { FBXLoader } from 'three\examples\jsm\loaders';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -6,6 +7,15 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+// Load FBX Card Models
+const fbxLoader = new FBXLoader()
+fbxLoader.load('card_assets/plane_001.fbx', (fbx) => {
+    scene.add(fbx.scene)
+}, undefined, (error) => {
+    console.error(error)
+});
+
 
 const geometry = new THREE.BoxGeometry(1, 1.4, 0.1);
 const material = new THREE.MeshBasicMaterial({color : 0x00ff00});
