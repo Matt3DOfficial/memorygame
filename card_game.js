@@ -9,8 +9,8 @@ document.body.appendChild(renderer.domElement);
 
 const geometry = new THREE.BoxGeometry(1, 1.4, 0.1);
 const material = new THREE.MeshBasicMaterial({color : 0x00ff00});
-const cardsAmount = 5
-const maxCardRows = 5
+const cardsAmount = 20
+const maxCardRows = 3
 const cardArray = new Array(cardsAmount)
 let posY = 0
 let currentIndex = 0
@@ -39,8 +39,9 @@ function cardSpawner() {
 cardSystem()
 
 
-camera.position.z = 20;
-camera.position.x = 7.1
+camera.position.z = 7;
+camera.position.x = 3.5
+camera.position.y = 0
 function animate() {
     cardArray[1].rotation.x += 0.1
     renderer.render(scene, camera);
