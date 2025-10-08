@@ -13,7 +13,7 @@ document.body.appendChild(renderer.domElement);
 // Card Spawning System
 const loader = new FBXLoader();
 const geometry = new THREE.BoxGeometry(1, 1.4, 0.1);
-const material = new THREE.MeshBasicMaterial({color : 'rgba(255, 13, 0, 1)'});
+const material = new THREE.MeshBasicMaterial({color : 'rgba(211, 76, 38, 1)'});
 const cardsAmount = 20
 const maxCardRows = 3
 const cardArray = new Array(cardsAmount)
@@ -35,6 +35,32 @@ for (let cardMeshArrayAmount = 1; cardMeshArrayAmount < 18; cardMeshArrayAmount+
     }
     
 }
+
+
+
+
+loader.load(
+            `clen.fbx`,
+            (object) => {
+                object.scale.set(0.1, 0.1, 0.1)
+                scene.add(object)
+                object.rotation.y = 1.5
+                object.position.x = 12
+                object.position.y = -6
+            },
+            () => {},
+            (error) => {
+                console.log(error)
+        });
+
+
+
+
+
+
+
+
+
 let cardsUsed
 function cardSpawner() {
     let posX = 0
@@ -44,7 +70,7 @@ function cardSpawner() {
         function addCardToFirstArray() {
         cardArray[currentIndex] = new THREE.Mesh(geometry, material);
         scene.add(cardArray[currentIndex]);
-        loader.load(
+/*         loader.load(
             `cards_assets/Plane_${randomCard}.fbx`,
             (object = cardArray[currentIndex]) => {
                 object.scale.set(0.003, 0.003, 0.003)
@@ -54,7 +80,7 @@ function cardSpawner() {
             () => {},
             (error) => {
                 console.log(error)
-        });
+        }); */
         cardArray[currentIndex].position.x = posX;
         cardArray[currentIndex].position.y = posY;
         posX += 1.5;
@@ -75,8 +101,7 @@ camera.position.x = 4;
 camera.position.y = -1;
 camera.rotation.y = 0;
 function animate() {
-    scene.background = new THREE.Color( 'rgba(189, 122, 93, 1)' );
-    scene.background = new THREE.Color( 'rgba(0, 0, 0, 1)' );
+
     cardArray[1].rotation.y += 0.01
     renderer.render(scene, camera);
 };
