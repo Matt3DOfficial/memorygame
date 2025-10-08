@@ -13,7 +13,7 @@ document.body.appendChild(renderer.domElement);
 // Card Spawning System
 const loader = new FBXLoader();
 const geometry = new THREE.BoxGeometry(1, 1.4, 0.1);
-const material = new THREE.MeshBasicMaterial({color : 0x404040});
+const material = new THREE.MeshBasicMaterial({color : 'rgba(255, 13, 0, 1)'});
 const cardsAmount = 20
 const maxCardRows = 3
 const cardArray = new Array(cardsAmount)
@@ -25,13 +25,13 @@ function cardSystem() {
         posY -= 2
     }
 }
-let cardMeshArray
-for (i = 1; i < 18; i++) {
-    if (i > 10) {
-        cardMeshArray[i] = `0${i}`
+let cardMeshArray = new Array(17)
+for (let cardMeshArrayAmount = 1; cardMeshArrayAmount < 18; cardMeshArrayAmount++) {
+    if (cardMeshArrayAmount > 10) {
+        cardMeshArray[cardMeshArrayAmount] = `0${cardMeshArrayAmount}`
     }
     else {
-        cardMeshArray[i] = `00${i}`
+        cardMeshArray[cardMeshArrayAmount] = `00${cardMeshArrayAmount}`
     }
     
 }
@@ -46,10 +46,10 @@ function cardSpawner() {
         scene.add(cardArray[currentIndex]);
         loader.load(
             `cards_assets/Plane_${randomCard}.fbx`,
-            (object) => {
-                object.scale.set(0.001, 0.001, 0.001)
+            (object = cardArray[currentIndex]) => {
+                object.scale.set(0.003, 0.003, 0.003)
                 scene.add(object)
-                testObject = object
+                object.rotation.y = 1.5
             },
             () => {},
             (error) => {
@@ -65,15 +65,18 @@ function cardSpawner() {
 
 cardSystem()
 
+scene.background = new THREE.Color( 'rgba(189, 122, 93, 1)' );
+const light = new THREE.PointLight(0xff0000, 100, 100);
+light.position.set(0, 0, 5);
+scene.add(light);
 
-const light = new THREE.AmbientLight(0x404040);
-scene.add(light)
-
-camera.position.z = 10;
-camera.position.x = 4
-camera.position.y = 0
-camera.rotation.y = 0
+camera.position.z = 6;
+camera.position.x = 4;
+camera.position.y = -1;
+camera.rotation.y = 0;
 function animate() {
+    scene.background = new THREE.Color( 'rgba(189, 122, 93, 1)' );
+    scene.background = new THREE.Color( 'rgba(0, 0, 0, 1)' );
     cardArray[1].rotation.y += 0.01
     renderer.render(scene, camera);
 };
