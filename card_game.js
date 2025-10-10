@@ -46,8 +46,10 @@ function cardSpawner() {
         // addCardToFirstArray() function creates a mesh inside cardArray list index, based on the currentIndex variable number
         function addCardToFirstArray() {
             cardArray[currentIndex] = new THREE.Mesh(geometry, material);
+            cardArray[currentIndex].userData.isCard = true
+            cardArray[currentIndex].userData.cardID = currentIndex
             scene.add(cardArray[currentIndex]);
-            loader.load(
+/*             loader.load(
                 `cards_assets/Plane_${randomCard}.fbx`,
                 (object = cardArray[currentIndex]) => {
                     object.scale.set(0.003, 0.003, 0.003)
@@ -57,7 +59,7 @@ function cardSpawner() {
                 () => {},
                 (error) => {
                     console.log(error)
-            });
+            }); */
             cardArray[currentIndex].position.x = posX;
             cardArray[currentIndex].position.y = posY;
             posX += 1.5;
@@ -96,7 +98,7 @@ loader.load(
 const rayCaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-function calculatePointerPosition() {
+function calculatePointerPosition(event) {
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
 };
@@ -114,26 +116,19 @@ function objectOnClick() {
 
     const intersects = rayCaster.intersectObjects(scene.children);
 
-    for (let i = 0; i < intersects.length; i++) {
-        flipUpdater(intersects[i])
-        intersects[i].object.material.color.set(0xff0000);
-        console.log('working')
+    if ((0 < intersects.length) && (intersects[0].object.userData.isCard)) {
+        flipUpdater(intersects[0]);
+        intersects[0].object.material.color.set(0xff0000);
+        console.log(`working ${intersects[0].object}`);
     };
 };
 
-
+window.addEventListener('click', calculatePointerPosition)
 
 function animate() {
-
-    renderer.render(scene, camera);
-};
-
-function render() {
-    cardArray[1].rotation.y += 0.01;
+    cardArray[1].rotation.y += 0.1;
     objectOnClick();
     renderer.render(scene, camera);
 };
 
-window.addEventListener('pointermove', calculatePointerPosition)
-window.addEventListener('click', objectOnClick)
-window.requestAnimationFrame(render)
+renderer.setAnimationLoop(animate);
