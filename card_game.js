@@ -47,7 +47,8 @@ function cardSpawner() {
         function addCardToFirstArray() {
             cardArray[currentIndex] = new THREE.Mesh(geometry, material);
             cardArray[currentIndex].userData.isCard = true
-            cardArray[currentIndex].userData.cardID = currentIndex
+            cardArray[currentIndex].userData.alreadyPicked = false
+            cardArray[currentIndex].userData.cardID = 1
             scene.add(cardArray[currentIndex]);
 /*             loader.load(
                 `cards_assets/Plane_${randomCard}.fbx`,
@@ -99,7 +100,9 @@ const flipsDOM = document.getElementById("flips")
 const timerDOM = document.getElementById("timer")
 const timer = new THREE.Timer();
 let flipCounter = 0
+let successfullFlips = 0
 let timeCounter = 0
+const flipsPlayed = new Array(2);
 const rayCaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
@@ -122,13 +125,14 @@ function timerSystem() {
 }
 
 function flipUpdater(objectToFlip) {
-    flipsDOM.innerHTML = `flips: ${flipCounter}`
+    if (flipsPlayed[0] == flipsPlayed[1]) {
+    flipsDOM.innerHTML = `flips: ${successfullFlips}`;
     playFlipAnimationCSS();
     playFlipAnimationTHREEJS();
-};
-
-function scoreUpdate() {
-
+    }
+    else {
+    flipsDOM.innerHTML = `flips: ${successfullFlips}`;
+    };
 };
 
 function gameSystem() {
@@ -142,24 +146,38 @@ function gameSystem() {
         flipUpdater();
     };
 };
-
+let picker = 0
 function objectOnClick() {
     rayCaster.setFromCamera(pointer, camera);
 
     const intersects = rayCaster.intersectObjects(scene.children);
 
-    if ((0 < intersects.length) && (intersects[0].object.userData.isCard)) {
+    if ((0 < intersects.length) && (intersects[0].object.userData.isCard) && (!intersects[0].object.alreadyPicked)) {
+        intersects[0].object.alreadyPicked = true
         gameSystem();
         intersects[0].object.material.color.set(0xff0000);
-        intersects[0].object.rotation.y += 0.6
-        console.log(`working ${intersects[0].object}`);
+        intersects[0].object.rotation.y += 0.6;
+        if (picker < 2) {
+            flipsPlayed[picker] = intersects[0].object.userData.cardID;
+            console.log(`stored card data inside of ${flipsPlayed[picker]}`)
+            picker++
+            if (flipsPlayed[0] == flipsPlayed[1] ) {
+                console.log('orking')
+                console.log(flipsPlayed[1])
+                scene.remove(cardArray[flipsPlayed[1]])
+            }
+        }
+        else {
+
+            picker = 0
+        }
     };
 };
 
 window.addEventListener('click', calculatePointerPosition)
 
 function animate() {
-    cardArray[1].rotation.y += 0.1;
+    cardArray[4].rotation.y += 0.1;
     cardArray[1].rotation.x += 0.01;
     timerSystem();
     // console.log(timeCounter)
