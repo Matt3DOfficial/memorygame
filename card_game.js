@@ -95,6 +95,11 @@ loader.load(
                 console.log(error)
         });
 // Setup raycasting and click events
+const flipsDOM = document.getElementById("flips")
+const timerDOM = document.getElementById("timer")
+const timer = new THREE.Timer();
+let flipCounter = 0
+let timeCounter = 0
 const rayCaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
@@ -103,22 +108,49 @@ function calculatePointerPosition(event) {
     pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
 };
 
-function playFlipAnimation() {
+function playFlipAnimationTHREEJS() {
 
 };
 
-function flipUpdater(objectToFlip) {
+function playFlipAnimationCSS() {
 
+};
+
+function timerSystem() {
+    // timeCounter += timer.update()
+}
+
+function flipUpdater(objectToFlip) {
+    flipsDOM.innerHTML = `flips: ${flipCounter}`
+    playFlipAnimationCSS();
+    playFlipAnimationTHREEJS();
+};
+
+function scoreUpdate() {
+
+};
+
+function gameSystem() {
+    if (flipCounter === 1) {
+        flipCounter++;
+        flipUpdater();
+        flipCounter = 0;
+    }
+    else {
+        flipCounter++;  
+    };
 };
 
 function objectOnClick() {
+    const alreadyRun = false
     rayCaster.setFromCamera(pointer, camera);
 
     const intersects = rayCaster.intersectObjects(scene.children);
 
     if ((0 < intersects.length) && (intersects[0].object.userData.isCard)) {
-        flipUpdater(intersects[0]);
+        gameSystem();
         intersects[0].object.material.color.set(0xff0000);
+        intersects[0].object.rotation.y += 0.6
         console.log(`working ${intersects[0].object}`);
     };
 };
@@ -128,6 +160,9 @@ window.addEventListener('click', calculatePointerPosition)
 function animate() {
     cardArray[1].rotation.y += 0.1;
     objectOnClick();
+    cardArray[1].rotation.x += 0.01;
+    timerSystem();
+    console.log(timeCounter)
     renderer.render(scene, camera);
 };
 
