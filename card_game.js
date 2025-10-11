@@ -106,6 +106,7 @@ const pointer = new THREE.Vector2();
 function calculatePointerPosition(event) {
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    objectOnClick();
 };
 
 function playFlipAnimationTHREEJS() {
@@ -138,11 +139,11 @@ function gameSystem() {
     }
     else {
         flipCounter++;  
+        flipUpdater();
     };
 };
 
 function objectOnClick() {
-    const alreadyRun = false
     rayCaster.setFromCamera(pointer, camera);
 
     const intersects = rayCaster.intersectObjects(scene.children);
@@ -159,10 +160,9 @@ window.addEventListener('click', calculatePointerPosition)
 
 function animate() {
     cardArray[1].rotation.y += 0.1;
-    objectOnClick();
     cardArray[1].rotation.x += 0.01;
     timerSystem();
-    console.log(timeCounter)
+    // console.log(timeCounter)
     renderer.render(scene, camera);
 };
 
