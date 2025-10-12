@@ -5,7 +5,7 @@ import { FBXLoader } from '/three.js-r180/examples/jsm/loaders/FBXLoader.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(window.innerWidth, window.innerHeight, false);
 document.body.appendChild(renderer.domElement);
 // Card Spawning System
 // Setup Card Geometry and Material
@@ -26,41 +26,67 @@ function cardSystem() {
         posY -= 2
     };
 };
-// Sets up the list of card files that you can access, this is essentialy a quick way of making a list of all of the .fbx card files, by assigning the number value, and an array index for each card. This creates a list of all the 3d card models which can be accessed later
-let cardMeshArray = new Array(17);
-for (let cardMeshArrayAmount = 1; cardMeshArrayAmount < 18; cardMeshArrayAmount++) {
-    if (cardMeshArrayAmount > 9) {
-        cardMeshArray[cardMeshArrayAmount] = `0${cardMeshArrayAmount}`
+
+const cardAssets = [
+    {fileName : 'Battle_Ox.fbx'}, {fileName : 'Mesmeric_Control.fbx'}, {fileName : 'Mystical_Elf.fbx'}, {fileName : 'Monster_Reborn001.fbx'}, {fileName : 'Pot_of_Greed.fbx'}, {fileName : 'Stop_Defense.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_2.fbx'}, {fileName : 'Shadow_Spell.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_1.fbx'}, {fileName : 'Polymerization.fbx'}
+]
+
+const outputList = []
+
+function applyTwoCardsToRandomIndex(listToApplyIndex, dataToApplyToIndex, posX, posY, indexRef) {
+    const randomIndex = Math.floor(Math.random() * dataToApplyToIndex.length)
+    for (let i = 0; i < 2; i++) {
+        listToApplyIndex[randomIndex] = dataToApplyToIndex
+        console.log(listToApplyIndex[randomIndex])
+        console.log(dataToApplyToIndex)
+        loader.load(
+            `card_assets/${listToApplyIndex[randomIndex]}`,
+            (object) => {
+                object.scale.set(0.001, 0.001, 0.001)
+                cardArray[indexRef] = object
+                scene.add(object)
+                object.position.y = posY
+                object.position.x = posX
+                object.position.z = 1
+                object.rotation.y = 3.1
+            },
+            () => {},
+            (error) => {
+                console.log(error)
+            });
     }
-    else {
-        cardMeshArray[cardMeshArrayAmount] = `00${cardMeshArrayAmount}`
-    };
-};
+}
+
 // cardSpawner() function runs a for loop, and runs based on the cardsAmount variable, divided by the rows, logically creating equal rows for every time the function is run
 function cardSpawner() {
     let posX = 0
     // i variable is local scoped and only used to keep track of how many times the loop is run
     for (let i = 0; i < Math.floor(cardsAmount / maxCardRows); i++) {
         // randomCard is used for picking a random FBX file from the list/array insided of the cardMeshArray variable we made earlier. Its uses math.random * 17 to pick a random number between 0 and 17, then uses math.floor to make a non-decimal number
-        const randomCard = cardMeshArray[Math.floor(Math.random() * 17 + 1)]
+        // const randomCard = cardMeshArray[Math.floor(Math.random() * 17 + 1)]
         // addCardToFirstArray() function creates a mesh inside cardArray list index, based on the currentIndex variable number
         function addCardToFirstArray() {
+            const indexRef = i
+            applyTwoCardsToRandomIndex(outputList, cardAssets[i].fileName, posX, posY, indexRef);
             cardArray[currentIndex] = new THREE.Mesh(geometry, material);
             cardArray[currentIndex].userData.isCard = true
             cardArray[currentIndex].userData.alreadyPicked = false
             cardArray[currentIndex].userData.cardID = 1
             scene.add(cardArray[currentIndex]);
-/*             loader.load(
-                `cards_assets/Plane_${randomCard}.fbx`,
-                (object = cardArray[currentIndex]) => {
-                    object.scale.set(0.003, 0.003, 0.003)
-                    scene.add(object)
-                    object.rotation.y = 1.5
-                },
-                () => {},
-                (error) => {
-                    console.log(error)
-            }); */
+            loader.load(
+            `card_assets/test.fbx`,
+            (object) => {
+                object.scale.set(0.001, 0.001, 0.001)
+                cardArray[4] = object
+                scene.add(object)
+                object.rotation.y = posY
+                object.position.x = posX
+                object.position.z = 1
+            },
+            () => {},
+            (error) => {
+                console.log(error)
+            });
             cardArray[currentIndex].position.x = posX;
             cardArray[currentIndex].position.y = posY;
             posX += 1.5;
@@ -71,11 +97,13 @@ function cardSpawner() {
 }
 cardSystem();
 scene.background = new THREE.Color( 'rgba(189, 122, 93, 1)' );
-const light = new THREE.PointLight(0xff0000, 300, 0);
-light.position.set(0, 0, 5);
-scene.add(light);
+const directionalLight = new THREE.DirectionalLight('rgba(255, 255, 255, 1)', 1, 0);
+const ambientLight = new THREE.AmbientLight('rgba(255, 255, 255, 1)', 100, 0);
+directionalLight.position.set(10, 10, 10);
+scene.add(directionalLight);
+scene.add(ambientLight);
 
-camera.position.z = 6;
+camera.position.z = 10;
 camera.position.x = 4;
 camera.position.y = -1;
 camera.rotation.y = 0;
@@ -95,6 +123,42 @@ loader.load(
             (error) => {
                 console.log(error)
         });
+
+loader.load(
+            `clen.fbx`,
+            (object) => {
+                object.scale.set(0.1, 0.1, 0.1)
+                scene.add(object)
+                object.rotation.y = -2
+                object.position.x = -3
+                object.position.y = -6
+                object.rotation.x = .1
+            },
+            () => {},
+            (error) => {
+                console.log(error)
+        });
+
+const textureLoader = new THREE.TextureLoader();
+
+const cardTexture = textureLoader.load('card_assets/Card Back.jpeg')
+
+
+loader.load(
+            `card_assets/test.fbx`,
+            (object) => {
+                object.scale.set(0.001, 0.001, 0.001)
+                cardArray[4] = object
+                scene.add(object)
+                object.rotation.y = 3.15
+                object.position.x = 2
+                object.position.z = 1
+            },
+            () => {},
+            (error) => {
+                console.log(error)
+        });
+
 // Setup raycasting and click events
 const flipsDOM = document.getElementById("flips")
 const timerDOM = document.getElementById("timer")
@@ -177,7 +241,7 @@ function objectOnClick() {
 window.addEventListener('click', calculatePointerPosition)
 
 function animate() {
-    cardArray[4].rotation.y += 0.1;
+    cardArray[4].rotation.y += 0.01;
     cardArray[1].rotation.x += 0.01;
     timerSystem();
     // console.log(timeCounter)
