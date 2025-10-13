@@ -1,4 +1,4 @@
-// import three library and external plugis
+// import three library and external plugins
 import * as THREE from 'three';
 import { FBXLoader } from '/three.js-r180/examples/jsm/loaders/FBXLoader.js';
 // Setup Scene, Camera, DOM and renderer
@@ -13,8 +13,8 @@ const loader = new FBXLoader();
 const geometry = new THREE.BoxGeometry(1, 1.4, 0.1);
 const material = new THREE.MeshBasicMaterial({color : 'rgba(211, 76, 38, 1)'});
 // Settings for Amount of Cards, Divided into Rows
-const cardsAmount = 20;
-const maxCardRows = 3;
+const cardsAmount = 30;
+const maxCardRows = 4;
 // cardArray is used for storing each card inside itself, this way you have the ability to index through the array and pick any card which will be useful later
 const cardArray = new Array(cardsAmount);
 let posY = 0;
@@ -33,9 +33,27 @@ const cardAssets = [
 
 const outputList = []
 
+const unavailableNames = new Array();
+const unavailableSlots = new Array();
+
 function applyTwoCardsToRandomIndex(listToApplyIndex, dataToApplyToIndex, posX, posY, indexRef) {
-    const randomIndex = Math.floor(Math.random() * dataToApplyToIndex.length)
-    for (let i = 0; i < 2; i++) {
+    function randomIndexGen() {
+        const randomIndex = Math.floor(Math.random() * dataToApplyToIndex.length);
+        return randomIndex;
+    };
+    function findAvailableSlot() {
+        const i = randomIndexGen();
+        if (unavailableSlots.includes(dataToApplyToIndex[i])) {
+            findAvailableSlot();
+        }
+        else {
+            return i;
+        };
+    };
+    const randomIndex = findAvailableSlot();
+    unavailableSlots[indexRef] = dataToApplyToIndex[randomIndex]
+
+    for (let i = 0; i < 1; i++) {
         listToApplyIndex[randomIndex] = dataToApplyToIndex
         console.log(listToApplyIndex[randomIndex])
         console.log(dataToApplyToIndex)
@@ -44,11 +62,13 @@ function applyTwoCardsToRandomIndex(listToApplyIndex, dataToApplyToIndex, posX, 
             (object) => {
                 object.scale.set(0.001, 0.001, 0.001)
                 cardArray[indexRef] = object
+                cardArray[indexRef].isCard = true
+                cardArray[indexRef].userData.alreadyPicked = false
                 scene.add(object)
                 object.position.y = posY
                 object.position.x = posX
                 object.position.z = 1
-                object.rotation.y = 3.1
+                object.rotation.y = 0.1
             },
             () => {},
             (error) => {
@@ -56,6 +76,8 @@ function applyTwoCardsToRandomIndex(listToApplyIndex, dataToApplyToIndex, posX, 
             });
     }
 }
+
+
 
 // cardSpawner() function runs a for loop, and runs based on the cardsAmount variable, divided by the rows, logically creating equal rows for every time the function is run
 function cardSpawner() {
@@ -68,27 +90,13 @@ function cardSpawner() {
         function addCardToFirstArray() {
             const indexRef = i
             applyTwoCardsToRandomIndex(outputList, cardAssets[i].fileName, posX, posY, indexRef);
-            cardArray[currentIndex] = new THREE.Mesh(geometry, material);
-            cardArray[currentIndex].userData.isCard = true
-            cardArray[currentIndex].userData.alreadyPicked = false
-            cardArray[currentIndex].userData.cardID = 1
-            scene.add(cardArray[currentIndex]);
-            loader.load(
-            `card_assets/test.fbx`,
-            (object) => {
-                object.scale.set(0.001, 0.001, 0.001)
-                cardArray[4] = object
-                scene.add(object)
-                object.rotation.y = posY
-                object.position.x = posX
-                object.position.z = 1
-            },
-            () => {},
-            (error) => {
-                console.log(error)
-            });
-            cardArray[currentIndex].position.x = posX;
-            cardArray[currentIndex].position.y = posY;
+            // cardArray[currentIndex] = new THREE.Mesh(geometry, material);
+            // cardArray[currentIndex].isCard = true
+            // cardArray[currentIndex].userData.alreadyPicked = false
+            // cardArray[currentIndex].userData.cardID = 1
+            // scene.add(cardArray[currentIndex]);
+            // cardArray[currentIndex].position.x = posX;
+            // cardArray[currentIndex].position.y = posY;
             posX += 1.5;
             currentIndex++
         };
@@ -142,22 +150,6 @@ loader.load(
 const textureLoader = new THREE.TextureLoader();
 
 const cardTexture = textureLoader.load('card_assets/Card Back.jpeg')
-
-
-loader.load(
-            `card_assets/test.fbx`,
-            (object) => {
-                object.scale.set(0.001, 0.001, 0.001)
-                cardArray[4] = object
-                scene.add(object)
-                object.rotation.y = 3.15
-                object.position.x = 2
-                object.position.z = 1
-            },
-            () => {},
-            (error) => {
-                console.log(error)
-        });
 
 // Setup raycasting and click events
 const flipsDOM = document.getElementById("flips")
@@ -239,10 +231,10 @@ function objectOnClick() {
 };
 
 window.addEventListener('click', calculatePointerPosition)
-
 function animate() {
     cardArray[4].rotation.y += 0.01;
     cardArray[1].rotation.x += 0.01;
+
     timerSystem();
     // console.log(timeCounter)
     renderer.render(scene, camera);
