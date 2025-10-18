@@ -172,6 +172,7 @@ function createCards() {
                                 object.position.y = cardArray[randomCardIndex].posProperties.positionY
                                 object.position.x = cardArray[randomCardIndex].posProperties.positionX
                                 object.position.z = -5
+                                object.rotation.y = 3
                                 object.traverse((child) => {
                                     if (child.isMesh) [
                                         child.userData = {isCard : true, alreadyPicked : false, cardID: randomCardAsset}
@@ -345,7 +346,7 @@ function objectOnClick() {
         if (picker < 2) {
             intersects[0].object.userData.alreadyPicked = true
             flipsPlayed[picker] = {cardID : intersects[0].object.userData.cardID, object: intersects[0], alreadyPicked : true}
-            intersects[0].object.rotation.y += 2.3
+            intersects[0].object.rotation.y += 3.3
             picker++
             if (picker === 2) {
                 console.log("run")
@@ -353,7 +354,7 @@ function objectOnClick() {
                     console.log(`removing both cards...`)
                     flipCounter++
                     flipsDOM.innerHTML = `flips: ${flipCounter}`;
-                    for (let i = 0; i < flipsPlayed.length; i++) {
+                    setTimeout(() => {for (let i = 0; i < flipsPlayed.length; i++) {
                         scene.remove(flipsPlayed[i].object)
                         flipsPlayed[i].object.object.position.x += 1000000000
                     //     flipsPlayed[i].object.traverse((child) => {
@@ -365,18 +366,22 @@ function objectOnClick() {
                         flipsPlayed[i].object = ''
                         flipsPlayed[i].cardID = ''
                         flipsPlayed[i].alreadyPicked = false
+                    };}, 2000)
+
+                    if (flipCounter === flipGoal) {
+                        winScreen();
                     };
-                    winScreen();
                     picker = 0;
                 }
                 else {
                     console.log("reseting cards")
-                    for (let i = 0; i < flipsPlayed.length; i++) {
+                    setTimeout
+                    (() => {for (let i = 0; i < flipsPlayed.length; i++) {
                         flipsPlayed[i].cardID = ''
                         flipsPlayed[i].alreadyPicked = false
                         flipsPlayed[i].object.object.userData.alreadyPicked = false
-                        flipsPlayed[i].object.object.rotation.y -= 2.3
-                    };
+                        flipsPlayed[i].object.object.rotation.y -= 3.3
+                    };}, 2000)
                     picker = 0
                 };  
             }
@@ -431,15 +436,17 @@ function objectOnClick() {
 
 
 
-
+const winScreenRef = document.getElementById(`win_screen`)
+const buttonRef = document.getElementById(`play_again_button`)
+buttonRef.addEventListener('click', () => {
+    winScreenRef.style = `display: none; pointer-events: none;`
+})
 
 // function shows win screen, with a play again button
 function winScreen() {
-
+    winScreenRef.style = `display: block; pointer-events: all;`
 }
-
-
-
+winScreen()
 
 
 

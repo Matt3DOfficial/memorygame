@@ -70,7 +70,7 @@ body {
   position: absolute;
 }
 
-#lose_screen {
+/* #lose_screen {
     display: flex;
   background-color: rgba(44, 2, 2, 0.737);
   margin: auto;
@@ -84,5 +84,5 @@ body {
   font-size: xx-large;
   z-index: 205;
   position: absolute;
-  filter: blur(50px);
-}
+  background-image: radial-gradient(29% 72% at 92% 12%, #FFFF 23%, #ff0000 100%);
+} */
