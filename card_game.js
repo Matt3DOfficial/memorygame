@@ -446,7 +446,6 @@ buttonRef.addEventListener('click', () => {
 function winScreen() {
     winScreenRef.style = `display: block; pointer-events: all;`
 }
-winScreen()
 
 
 
