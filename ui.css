@@ -27,6 +27,7 @@
   padding: 2.5vb;
   font-family: 'gameFont';
   font-size: xx-large;
+  z-index: 200;
 }
 
 #timer {
@@ -40,6 +41,7 @@ body {
     pointer-events: none;
     overflow: hidden;
 }
+
 #main_canvas {
     position: absolute;
   top: 10px;
@@ -50,4 +52,37 @@ body {
   align-items: center;
   z-index: 100;
   pointer-events: none;
+}
+
+#win_screen {
+    display: flex;
+  background-color: rgba(44, 2, 2, 0.737);
+  margin: auto;
+  width: 50%;
+  align-self: center;
+  margin-top: 0px;
+  border-radius: 10px;
+  flex-direction: row;
+  padding: 100vb;
+  font-family: 'gameFont';
+  font-size: xx-large;
+  z-index: 205;
+  position: absolute;
+}
+
+#lose_screen {
+    display: flex;
+  background-color: rgba(44, 2, 2, 0.737);
+  margin: auto;
+  width: 50%;
+  align-self: center;
+  margin-top: 0px;
+  border-radius: 10px;
+  flex-direction: row;
+  padding: 100vb;
+  font-family: 'gameFont';
+  font-size: xx-large;
+  z-index: 205;
+  position: absolute;
+  filter: blur(50px);
 }

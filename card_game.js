@@ -10,10 +10,10 @@ document.body.appendChild(renderer.domElement);
 // Card Spawning System
 // Setup Card Geometry and Material
 const loader = new FBXLoader();
-const geometry = new THREE.BoxGeometry(1, 1.4, 0.1);
-const material = new THREE.MeshBasicMaterial({color : 'rgba(211, 76, 38, 1)'});
+// const geometry = new THREE.BoxGeometry(1, 1.4, 0.1); // DEPRECEATED
+// const material = new THREE.MeshBasicMaterial({color : 'rgba(211, 76, 38, 1)'}); // DEPRECEATED
 // Settings for Amount of Cards, Divided into Rows
-const cardsAmount = 30;
+/* const cardsAmount = 30;
 const maxCardRows = 4;
 // cardArray is used for storing each card inside itself, this way you have the ability to index through the array and pick any card which will be useful later
 const cardArray = new Array(cardsAmount);
@@ -22,8 +22,8 @@ let currentIndex = 0;
 // Essentially the cardSystem function goes through each row, and runs the cardSpawner() function for the amount of cardRows there are.
 function cardSystem() {
     for (let i = 0; i < maxCardRows; i++) {
-        cardSpawner()
-        posY -= 2
+        cardSpawner();
+        posY -= 2;
     };
 };
 
@@ -51,7 +51,7 @@ function applyTwoCardsToRandomIndex(listToApplyIndex, dataToApplyToIndex, posX, 
         };
     };
     const randomIndex = findAvailableSlot();
-    unavailableSlots[indexRef] = dataToApplyToIndex[randomIndex]
+    unavailableSlots[currentIndex] = dataToApplyToIndex[randomIndex]
 
     for (let i = 0; i < 1; i++) {
         listToApplyIndex[randomIndex] = dataToApplyToIndex
@@ -61,9 +61,9 @@ function applyTwoCardsToRandomIndex(listToApplyIndex, dataToApplyToIndex, posX, 
             `card_assets/${listToApplyIndex[randomIndex]}`,
             (object) => {
                 object.scale.set(0.001, 0.001, 0.001)
-                cardArray[indexRef] = object
-                cardArray[indexRef].isCard = true
-                cardArray[indexRef].userData.alreadyPicked = false
+                cardArray[currentIndex] = object
+                cardArray[currentIndex].isCard = true
+                cardArray[currentIndex].userData.alreadyPicked = false
                 scene.add(object)
                 object.position.y = posY
                 object.position.x = posX
@@ -84,26 +84,151 @@ function cardSpawner() {
     let posX = 0
     // i variable is local scoped and only used to keep track of how many times the loop is run
     for (let i = 0; i < Math.floor(cardsAmount / maxCardRows); i++) {
-        // randomCard is used for picking a random FBX file from the list/array insided of the cardMeshArray variable we made earlier. Its uses math.random * 17 to pick a random number between 0 and 17, then uses math.floor to make a non-decimal number
-        // const randomCard = cardMeshArray[Math.floor(Math.random() * 17 + 1)]
-        // addCardToFirstArray() function creates a mesh inside cardArray list index, based on the currentIndex variable number
+        console.log(currentIndex)
         function addCardToFirstArray() {
-            const indexRef = i
+            const indexRef = i;
             applyTwoCardsToRandomIndex(outputList, cardAssets[i].fileName, posX, posY, indexRef);
-            // cardArray[currentIndex] = new THREE.Mesh(geometry, material);
-            // cardArray[currentIndex].isCard = true
-            // cardArray[currentIndex].userData.alreadyPicked = false
-            // cardArray[currentIndex].userData.cardID = 1
-            // scene.add(cardArray[currentIndex]);
-            // cardArray[currentIndex].position.x = posX;
-            // cardArray[currentIndex].position.y = posY;
             posX += 1.5;
+
             currentIndex++
         };
         addCardToFirstArray();
     };
 }
-cardSystem();
+cardSystem(); */
+
+
+
+
+
+
+
+
+
+
+const cardsAmount = 50;
+const flipGoal = cardsAmount / 2
+const cardColumnsAmount = 5;
+const cardRowAmount = cardsAmount / cardColumnsAmount;
+const cardArray = new Array(cardsAmount);
+const cardAssets = [{fileName : 'Battle_Ox.fbx'}, {fileName : 'Mesmeric_Control.fbx'}, {fileName : 'Mystical_Elf.fbx'}, {fileName : 'Monster_Reborn001.fbx'}, {fileName : 'Pot_of_Greed.fbx'}, {fileName : 'Stop_Defense.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_2.fbx'}, {fileName : 'Shadow_Spell.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_1.fbx'}, {fileName : 'Polymerization.fbx'}];
+
+/* function loadCardObject() {
+    loader.load(
+            `card_assets/${}`,
+            (object) => {
+                object.scale.set(0.001, 0.001, 0.001)
+                object.position.y = posY
+                object.position.x = posX
+                scene.add(object)
+                cardArray[currentIndex] = object
+            },
+            () => {},
+            (error) => {
+                console.log(error)
+            });
+} */
+
+
+
+function createCards() {
+    let posX = 0;
+    let posY = 0;
+    let cardsAmountIndex = 0
+
+    for (let i = 0; i < cardArray.length; i++) {
+        cardArray[i] = {alreadyPicked: false, isCard: true, posProperties : {positionX : posX, positionY : posY}, otherProperties : {isNotEmpty : false}}
+    }
+    function calculateCardsPosition() {
+        for (let i = 0; i < cardColumnsAmount; i++) {
+            for (let i = 0; i < cardRowAmount; i++) {
+                cardArray[cardsAmountIndex].posProperties.positionX = posX
+                cardArray[cardsAmountIndex].posProperties.positionY = posY
+                posX += 2
+                cardsAmountIndex++
+            }
+            posY -= 2
+            posX = 0
+        }
+    }
+    calculateCardsPosition()
+
+    for (let i = 0; i < cardColumnsAmount; i++) {
+        for (let i = 0; i < cardRowAmount; i += 2) {
+            const randomCardAssetIndex = Math.floor(Math.random() * cardAssets.length);
+            const randomCardAsset = cardAssets[randomCardAssetIndex].fileName;
+            for (let i = 0; i < 2; i ++) {
+                function insertRandomCard() {
+                    const randomCardIndex = Math.floor(Math.random() * cardArray.length);
+                    if (cardArray[randomCardIndex].otherProperties.isNotEmpty) {
+                        insertRandomCard();
+                    }
+                    else {
+                        cardArray[randomCardIndex].otherProperties = {isNotEmpty : true, fileName : randomCardAsset, object : ''}
+                        loader.load(
+                            `card_assets/${randomCardAsset}`,
+                            (object) => {
+                                object.scale.set(0.001, 0.001, 0.001)
+                                object.position.y = cardArray[randomCardIndex].posProperties.positionY
+                                object.position.x = cardArray[randomCardIndex].posProperties.positionX
+                                object.position.z = -5
+                                object.traverse((child) => {
+                                    if (child.isMesh) [
+                                        child.userData = {isCard : true, alreadyPicked : false, cardID: randomCardAsset}
+                                    ]
+                                })
+                                scene.add(object)
+                                console.log(object)
+                                cardArray[randomCardIndex].object = object
+                            },
+                            () => {},
+                            (error) => {
+                                console.log(error)
+                        });
+                    };
+                };
+                insertRandomCard();
+            };
+        };
+        posY -= 2
+    };
+};
+
+createCards();
+
+
+
+
+
+
+
+function tets(){console.log(cardArray[1].isCard)}
+
+tets()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const testGeometry = new THREE.BoxGeometry(1, 1, 1);
+const testsMaterial = new THREE.MeshBasicMaterial({color:'rgba(198, 88, 88, 0.88)'});
+const testObject = new THREE.Mesh(testGeometry, testsMaterial);
+scene.add(testObject);
+
+
 scene.background = new THREE.Color( 'rgba(189, 122, 93, 1)' );
 const directionalLight = new THREE.DirectionalLight('rgba(255, 255, 255, 1)', 1, 0);
 const ambientLight = new THREE.AmbientLight('rgba(255, 255, 255, 1)', 100, 0);
@@ -111,9 +236,9 @@ directionalLight.position.set(10, 10, 10);
 scene.add(directionalLight);
 scene.add(ambientLight);
 
-camera.position.z = 10;
-camera.position.x = 4;
-camera.position.y = -1;
+camera.position.z = 5;
+camera.position.x = 8;
+camera.position.y = -2;
 camera.rotation.y = 0;
 
 
@@ -124,8 +249,9 @@ loader.load(
                 object.scale.set(0.1, 0.1, 0.1)
                 scene.add(object)
                 object.rotation.y = 1.5
-                object.position.x = 12
+                object.position.x = 22
                 object.position.y = -6
+                object.position.z = -6
             },
             () => {},
             (error) => {
@@ -151,6 +277,20 @@ const textureLoader = new THREE.TextureLoader();
 
 const cardTexture = textureLoader.load('card_assets/Card Back.jpeg')
 
+
+
+function playFlipAnimationTHREEJS() {
+
+};
+
+function playFlipAnimationCSS() {
+
+};
+
+function timerSystem() {
+    // timeCounter += timer.update()
+}
+
 // Setup raycasting and click events
 const flipsDOM = document.getElementById("flips")
 const timerDOM = document.getElementById("timer")
@@ -168,28 +308,12 @@ function calculatePointerPosition(event) {
     objectOnClick();
 };
 
-function playFlipAnimationTHREEJS() {
-
-};
-
-function playFlipAnimationCSS() {
-
-};
-
-function timerSystem() {
-    // timeCounter += timer.update()
-}
-
 function flipUpdater(objectToFlip) {
-    if (flipsPlayed[0] == flipsPlayed[1]) {
     flipsDOM.innerHTML = `flips: ${successfullFlips}`;
     playFlipAnimationCSS();
     playFlipAnimationTHREEJS();
     }
-    else {
-    flipsDOM.innerHTML = `flips: ${successfullFlips}`;
-    };
-};
+
 
 function gameSystem() {
     if (flipCounter === 1) {
@@ -203,38 +327,156 @@ function gameSystem() {
     };
 };
 let picker = 0
+for (let i = 0; i < 2; i++) {
+    flipsPlayed[i] = {cardID : '', object: '', alreadyPicked : false}
+}
+
+
 function objectOnClick() {
     rayCaster.setFromCamera(pointer, camera);
 
     const intersects = rayCaster.intersectObjects(scene.children);
+    console.log(`${intersects[0].object.userData.isCard} ${intersects[0].object.userData.alreadyPicked}`)
 
-    if ((0 < intersects.length) && (intersects[0].object.userData.isCard) && (!intersects[0].object.alreadyPicked)) {
-        intersects[0].object.alreadyPicked = true
-        gameSystem();
-        intersects[0].object.material.color.set(0xff0000);
-        intersects[0].object.rotation.y += 0.6;
+    if ((0 < intersects.length) && (intersects[0].object.userData.isCard) && (!intersects[0].object.userData.alreadyPicked) && ((!flipsPlayed[0].alreadyPicked) || (!flipsPlayed[1].alreadyPicked))) {
+        console.log(`working`)
+        console.log(intersects[0].object)
+
         if (picker < 2) {
-            flipsPlayed[picker] = intersects[0].object.userData.cardID;
-            console.log(`stored card data inside of ${flipsPlayed[picker]}`)
+            intersects[0].object.userData.alreadyPicked = true
+            flipsPlayed[picker] = {cardID : intersects[0].object.userData.cardID, object: intersects[0], alreadyPicked : true}
+            intersects[0].object.rotation.y += 2.3
             picker++
-            if (flipsPlayed[0] == flipsPlayed[1] ) {
-                console.log('orking')
-                console.log(flipsPlayed[1])
-                scene.remove(cardArray[flipsPlayed[1]])
+            if (picker === 2) {
+                console.log("run")
+                if (flipsPlayed[0].cardID == flipsPlayed[1].cardID) {
+                    console.log(`removing both cards...`)
+                    flipCounter++
+                    flipsDOM.innerHTML = `flips: ${flipCounter}`;
+                    for (let i = 0; i < flipsPlayed.length; i++) {
+                        scene.remove(flipsPlayed[i].object)
+                        flipsPlayed[i].object.object.position.x += 1000000000
+                    //     flipsPlayed[i].object.traverse((child) => {
+                    //         if (child.isMesh) [
+                    //             scene.remove(child)
+                    //         ]
+                    //     }
+                    // )
+                        flipsPlayed[i].object = ''
+                        flipsPlayed[i].cardID = ''
+                        flipsPlayed[i].alreadyPicked = false
+                    };
+                    winScreen();
+                    picker = 0;
+                }
+                else {
+                    console.log("reseting cards")
+                    for (let i = 0; i < flipsPlayed.length; i++) {
+                        flipsPlayed[i].cardID = ''
+                        flipsPlayed[i].alreadyPicked = false
+                        flipsPlayed[i].object.object.userData.alreadyPicked = false
+                        flipsPlayed[i].object.object.rotation.y -= 2.3
+                    };
+                    picker = 0
+                };  
             }
+            
+        
         }
-        else {
+        // if (flipsPlayed[0].cardID == flipsPlayed[1].cardID) {
+        //     for (let i = 0; i < flipsPlayed.length; i++) {
+        //         scene.remove(flipsPlayed[i])
+        //         flipsPlayed[i].object = ''
+        //     }
+            
+        //     for (let i = 0; i < flipsPlayed.length; i++) {
+                
+        //     }
+        // }
+        // else {
+        //     for (let i = 0; i < flipsPlayed.length; i++) {
+        //         flipsPlayed[i].cardID = ''
+        //         flipsPlayed[i].alreadyPicked = false
+        //         // intersects[i].object.object.rotation.x += 0.4
+        //     }
+        // };
 
-            picker = 0
+        // if (picker < 2) {
+        //     flipsPlayed[picker] = {cardID : intersects[0].object.userData.cardID, object: intersects[0]}
+        //     console.log(`stored card data: ${flipsPlayed[0].cardID}, ${flipsPlayed[1].cardID}, and current picker index is ${picker}`)
+        //     picker++
+        //     if ((flipsPlayed[0].cardID == flipsPlayed[1].cardID) && (picker === 1)) {
+        //         console.log('orking')
+        //         console.log(flipsPlayed[1])
+        //         scene.remove(flipsPlayed[1].object)
+        //         scene.remove(flipsPlayed[0].object)
+        //         picker = 0
+        //         for (let i = 0; i < flipsPlayed.length; i++) {
+        //         flipsPlayed[i] = ''
+        //         }
+        //     }
+        //     if (picker === 1) {
+                
+        //     }
+            
+        // }
+        // else {
+        //     picker = 0
+        // }
         }
-    };
+    else {
+        console.log('invalid')
+    }
 };
+
+
+
+
+
+// function shows win screen, with a play again button
+function winScreen() {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 window.addEventListener('click', calculatePointerPosition)
 function animate() {
-    cardArray[4].rotation.y += 0.01;
-    cardArray[1].rotation.x += 0.01;
-
+    // cardArray[4].rotation.y += 0.01;
+    // cardArray[1].rotation.x += 0.01;
     timerSystem();
     // console.log(timeCounter)
     renderer.render(scene, camera);
