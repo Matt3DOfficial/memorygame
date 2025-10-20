@@ -243,7 +243,7 @@ camera.position.y = -2;
 camera.rotation.y = 0;
 
 
-// Setup background scene
+/* // Setup background scene
 loader.load(
             `clen.fbx`,
             (object) => {
@@ -273,7 +273,7 @@ loader.load(
             (error) => {
                 console.log(error)
         });
-
+ */
 const textureLoader = new THREE.TextureLoader();
 
 const cardTexture = textureLoader.load('card_assets/Card Back.jpeg')

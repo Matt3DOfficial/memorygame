@@ -12,7 +12,7 @@
 
 @font-face {
     font-family: gameFont;
-    src: url(Chomsky.otf);
+    src: url(main_font.ttf);
 }
 
 #score {
@@ -35,7 +35,7 @@
 }
 
 #flips {
-    margin-left: 70vb;
+    margin-left: 66vb;
 }
 body {
     pointer-events: none;
