@@ -1,5 +1,5 @@
 // import gsap animation library
-import gsap from 'gsap';
+// import gsap from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js';
 // import three library and external plugins
 import * as THREE from 'three';
 import { FBXLoader } from '/three.js-r180/examples/jsm/loaders/FBXLoader.js';
@@ -108,9 +108,9 @@ cardSystem(); */
 
 
 
-const cardsAmount = 10;
+const cardsAmount = 40;
 const flipGoal = cardsAmount / 2
-const cardColumnsAmount = 5;
+const cardColumnsAmount = 4;
 const cardRowAmount = cardsAmount / cardColumnsAmount;
 const cardArray = new Array(cardsAmount);
 const cardAssets = [{fileName : 'Battle_Ox.fbx'}, {fileName : 'Mesmeric_Control.fbx'}, {fileName : 'Mystical_Elf.fbx'}, {fileName : 'Monster_Reborn001.fbx'}, {fileName : 'Pot_of_Greed.fbx'}, {fileName : 'Stop_Defense.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_2.fbx'}, {fileName : 'Shadow_Spell.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_1.fbx'}, {fileName : 'Polymerization.fbx'}];
@@ -171,18 +171,25 @@ function createCards() {
                             `card_assets/${randomCardAsset}`,
                             (object) => {
                                 object.scale.set(0.001, 0.001, 0.001)
-                                object.position.y = cardArray[randomCardIndex].posProperties.positionY
-                                object.position.x = cardArray[randomCardIndex].posProperties.positionX
+                                object.position.y = 0
+                                object.position.x = 0
                                 object.position.z = -5
-                                object.rotation.y = 3
+                                object.rotation.y = Math.PI / 180 * 180
                                 object.traverse((child) => {
                                     if (child.isMesh) [
                                         child.userData = {isCard : true, alreadyPicked : false, cardID: randomCardAsset}
                                     ]
                                 })
                                 scene.add(object)
+                                gsap.to(object.position, {
+                                    duration: .5,
+                                    delay: 0.1 * 0.25 + Math.random() * 0.8,
+                                    ease: 'expo.inOut',
+                                    x: cardArray[randomCardIndex].posProperties.positionX,
+                                    y: cardArray[randomCardIndex].posProperties.positionY
+                                })
                                 console.log(object)
-                                cardArray[randomCardIndex].object = object
+                                cardArray[randomCardIndex].otherProperties.object = object
                             },
                             () => {},
                             (error) => {
@@ -345,7 +352,11 @@ function objectOnClick() {
         if (picker < 2) {
             intersects[0].object.userData.alreadyPicked = true
             flipsPlayed[picker] = {cardID : intersects[0].object.userData.cardID, object: intersects[0], alreadyPicked : true}
-            intersects[0].object.rotation.y += 3.3
+            // intersects[0].object.rotation.y += 3.3
+            gsap.to(intersects[0].object.rotation, {
+                y: Math.PI / 180 * 180,
+                duration: 0.4
+            })
             picker++
             if (picker === 2) {
                 console.log("run")
@@ -381,7 +392,7 @@ function objectOnClick() {
                         flipsPlayed[i].object.object.userData.alreadyPicked = false
                         // flipsPlayed[i].object.object.rotation.y -= 3.3
                         gsap.to(flipsPlayed[i].object.object.rotation, {
-                            y: -3.3,
+                            y: Math.PI / 180 * 0,
                             duration: 0.4
                         })
                     };}, 2000)
@@ -462,13 +473,6 @@ function winScreen() {
 
 // setup clock system
 const clockSystem = new THREE.Clock()
-
-
-
-
-
-
-
 
 
 
