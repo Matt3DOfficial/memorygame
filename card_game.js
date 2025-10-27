@@ -1,3 +1,5 @@
+// import gsap animation library
+import gsap from 'gsap';
 // import three library and external plugins
 import * as THREE from 'three';
 import { FBXLoader } from '/three.js-r180/examples/jsm/loaders/FBXLoader.js';
@@ -106,7 +108,7 @@ cardSystem(); */
 
 
 
-const cardsAmount = 50;
+const cardsAmount = 10;
 const flipGoal = cardsAmount / 2
 const cardColumnsAmount = 5;
 const cardRowAmount = cardsAmount / cardColumnsAmount;
@@ -141,7 +143,7 @@ function createCards() {
     }
     function calculateCardsPosition() {
         for (let i = 0; i < cardColumnsAmount; i++) {
-            for (let i = 0; i < cardRowAmount; i++) {
+            for (let i = 0; i < Math.floor(cardRowAmount); i++) {
                 cardArray[cardsAmountIndex].posProperties.positionX = posX
                 cardArray[cardsAmountIndex].posProperties.positionY = posY
                 posX += 2
@@ -154,7 +156,7 @@ function createCards() {
     calculateCardsPosition()
 
     for (let i = 0; i < cardColumnsAmount; i++) {
-        for (let i = 0; i < cardRowAmount; i += 2) {
+        for (let i = 0; i < Math.floor(cardRowAmount); i += 2) {
             const randomCardAssetIndex = Math.floor(Math.random() * cardAssets.length);
             const randomCardAsset = cardAssets[randomCardAssetIndex].fileName;
             for (let i = 0; i < 2; i ++) {
@@ -288,9 +290,6 @@ function playFlipAnimationCSS() {
 
 };
 
-function timerSystem() {
-    // timeCounter += timer.update()
-}
 
 // Setup raycasting and click events
 const flipsDOM = document.getElementById("flips")
@@ -380,7 +379,11 @@ function objectOnClick() {
                         flipsPlayed[i].cardID = ''
                         flipsPlayed[i].alreadyPicked = false
                         flipsPlayed[i].object.object.userData.alreadyPicked = false
-                        flipsPlayed[i].object.object.rotation.y -= 3.3
+                        // flipsPlayed[i].object.object.rotation.y -= 3.3
+                        gsap.to(flipsPlayed[i].object.object.rotation, {
+                            y: -3.3,
+                            duration: 0.4
+                        })
                     };}, 2000)
                     picker = 0
                 };  
@@ -439,7 +442,12 @@ function objectOnClick() {
 const winScreenRef = document.getElementById(`win_screen`)
 const buttonRef = document.getElementById(`play_again_button`)
 buttonRef.addEventListener('click', () => {
-    winScreenRef.style = `display: none; pointer-events: none;`
+    winScreenRef.style = `display: none; pointer-events: none;`;
+    flipCounter = 0;
+    flipsDOM.innerHTML = `flips: ${flipCounter}`;
+    clockSystem.stop();
+    clockSystem.start();
+    createCards();
 })
 
 // function shows win screen, with a play again button
@@ -452,7 +460,8 @@ function winScreen() {
 
 
 
-
+// setup clock system
+const clockSystem = new THREE.Clock()
 
 
 
@@ -480,12 +489,12 @@ function winScreen() {
 
 
 window.addEventListener('click', calculatePointerPosition)
+clockSystem.start()
 function animate() {
-    // cardArray[4].rotation.y += 0.01;
-    // cardArray[1].rotation.x += 0.01;
-    timerSystem();
-    // console.log(timeCounter)
+    timerDOM.innerHTML = `timer: ${Math.floor(clockSystem.getElapsedTime())}`
     renderer.render(scene, camera);
+    testObject.rotation.x += 0.01
+    testObject.rotation.y += 0.01
 };
 
 renderer.setAnimationLoop(animate);
