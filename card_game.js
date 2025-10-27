@@ -108,9 +108,9 @@ cardSystem(); */
 
 
 
-const cardsAmount = 40;
+const cardsAmount = 20;
 const flipGoal = cardsAmount / 2
-const cardColumnsAmount = 4;
+const cardColumnsAmount = 2;
 const cardRowAmount = cardsAmount / cardColumnsAmount;
 const cardArray = new Array(cardsAmount);
 const cardAssets = [{fileName : 'Battle_Ox.fbx'}, {fileName : 'Mesmeric_Control.fbx'}, {fileName : 'Mystical_Elf.fbx'}, {fileName : 'Monster_Reborn001.fbx'}, {fileName : 'Pot_of_Greed.fbx'}, {fileName : 'Stop_Defense.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_2.fbx'}, {fileName : 'Shadow_Spell.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_1.fbx'}, {fileName : 'Polymerization.fbx'}];
@@ -365,6 +365,8 @@ function objectOnClick() {
                     flipCounter++
                     flipsDOM.innerHTML = `flips: ${flipCounter}`;
                     setTimeout(() => {for (let i = 0; i < flipsPlayed.length; i++) {
+
+
                         scene.remove(flipsPlayed[i].object)
                         flipsPlayed[i].object.object.position.x += 1000000000
                     //     flipsPlayed[i].object.traverse((child) => {
