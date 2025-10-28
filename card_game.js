@@ -12,101 +12,6 @@ document.body.appendChild(renderer.domElement);
 // Card Spawning System
 // Setup Card Geometry and Material
 const loader = new FBXLoader();
-// const geometry = new THREE.BoxGeometry(1, 1.4, 0.1); // DEPRECEATED
-// const material = new THREE.MeshBasicMaterial({color : 'rgba(211, 76, 38, 1)'}); // DEPRECEATED
-// Settings for Amount of Cards, Divided into Rows
-/* const cardsAmount = 30;
-const maxCardRows = 4;
-// cardArray is used for storing each card inside itself, this way you have the ability to index through the array and pick any card which will be useful later
-const cardArray = new Array(cardsAmount);
-let posY = 0;
-let currentIndex = 0;
-// Essentially the cardSystem function goes through each row, and runs the cardSpawner() function for the amount of cardRows there are.
-function cardSystem() {
-    for (let i = 0; i < maxCardRows; i++) {
-        cardSpawner();
-        posY -= 2;
-    };
-};
-
-const cardAssets = [
-    {fileName : 'Battle_Ox.fbx'}, {fileName : 'Mesmeric_Control.fbx'}, {fileName : 'Mystical_Elf.fbx'}, {fileName : 'Monster_Reborn001.fbx'}, {fileName : 'Pot_of_Greed.fbx'}, {fileName : 'Stop_Defense.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_2.fbx'}, {fileName : 'Shadow_Spell.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_1.fbx'}, {fileName : 'Polymerization.fbx'}
-]
-
-const outputList = []
-
-const unavailableNames = new Array();
-const unavailableSlots = new Array();
-
-function applyTwoCardsToRandomIndex(listToApplyIndex, dataToApplyToIndex, posX, posY, indexRef) {
-    function randomIndexGen() {
-        const randomIndex = Math.floor(Math.random() * dataToApplyToIndex.length);
-        return randomIndex;
-    };
-    function findAvailableSlot() {
-        const i = randomIndexGen();
-        if (unavailableSlots.includes(dataToApplyToIndex[i])) {
-            findAvailableSlot();
-        }
-        else {
-            return i;
-        };
-    };
-    const randomIndex = findAvailableSlot();
-    unavailableSlots[currentIndex] = dataToApplyToIndex[randomIndex]
-
-    for (let i = 0; i < 1; i++) {
-        listToApplyIndex[randomIndex] = dataToApplyToIndex
-        console.log(listToApplyIndex[randomIndex])
-        console.log(dataToApplyToIndex)
-        loader.load(
-            `card_assets/${listToApplyIndex[randomIndex]}`,
-            (object) => {
-                object.scale.set(0.001, 0.001, 0.001)
-                cardArray[currentIndex] = object
-                cardArray[currentIndex].isCard = true
-                cardArray[currentIndex].userData.alreadyPicked = false
-                scene.add(object)
-                object.position.y = posY
-                object.position.x = posX
-                object.position.z = 1
-                object.rotation.y = 0.1
-            },
-            () => {},
-            (error) => {
-                console.log(error)
-            });
-    }
-}
-
-
-
-// cardSpawner() function runs a for loop, and runs based on the cardsAmount variable, divided by the rows, logically creating equal rows for every time the function is run
-function cardSpawner() {
-    let posX = 0
-    // i variable is local scoped and only used to keep track of how many times the loop is run
-    for (let i = 0; i < Math.floor(cardsAmount / maxCardRows); i++) {
-        console.log(currentIndex)
-        function addCardToFirstArray() {
-            const indexRef = i;
-            applyTwoCardsToRandomIndex(outputList, cardAssets[i].fileName, posX, posY, indexRef);
-            posX += 1.5;
-
-            currentIndex++
-        };
-        addCardToFirstArray();
-    };
-}
-cardSystem(); */
-
-
-
-
-
-
-
-
-
 
 const cardsAmount = 20;
 const flipGoal = cardsAmount / 2
@@ -114,23 +19,6 @@ const cardColumnsAmount = 2;
 const cardRowAmount = cardsAmount / cardColumnsAmount;
 const cardArray = new Array(cardsAmount);
 const cardAssets = [{fileName : 'Battle_Ox.fbx'}, {fileName : 'Mesmeric_Control.fbx'}, {fileName : 'Mystical_Elf.fbx'}, {fileName : 'Monster_Reborn001.fbx'}, {fileName : 'Pot_of_Greed.fbx'}, {fileName : 'Stop_Defense.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_2.fbx'}, {fileName : 'Shadow_Spell.fbx'}, {fileName : 'The_Flute_of_Summoning_Dragon_1.fbx'}, {fileName : 'Polymerization.fbx'}];
-
-/* function loadCardObject() {
-    loader.load(
-            `card_assets/${}`,
-            (object) => {
-                object.scale.set(0.001, 0.001, 0.001)
-                object.position.y = posY
-                object.position.x = posX
-                scene.add(object)
-                cardArray[currentIndex] = object
-            },
-            () => {},
-            (error) => {
-                console.log(error)
-            });
-} */
-
 
 
 function createCards() {
@@ -175,6 +63,7 @@ function createCards() {
                                 object.position.x = 0
                                 object.position.z = -5
                                 object.rotation.y = Math.PI / 180 * 180
+                                object.rotation.z = -1
                                 object.traverse((child) => {
                                     if (child.isMesh) [
                                         child.userData = {isCard : true, alreadyPicked : false, cardID: randomCardAsset}
@@ -187,6 +76,12 @@ function createCards() {
                                     ease: 'expo.inOut',
                                     x: cardArray[randomCardIndex].posProperties.positionX,
                                     y: cardArray[randomCardIndex].posProperties.positionY
+                                })
+                                gsap.to(object.rotation, {
+                                    duration: .5,
+                                    delay: 0.1 * 0.25 + Math.random() * 0.8,
+                                    ease: 'expo.inOut',
+                                    z: 0
                                 })
                                 console.log(object)
                                 cardArray[randomCardIndex].otherProperties.object = object
@@ -217,22 +112,6 @@ function tets(){console.log(cardArray[1].isCard)}
 tets()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const testGeometry = new THREE.BoxGeometry(1, 1, 1);
 const testsMaterial = new THREE.MeshBasicMaterial({color:'rgba(198, 88, 88, 0.88)'});
 const testObject = new THREE.Mesh(testGeometry, testsMaterial);
@@ -251,38 +130,6 @@ camera.position.x = 8;
 camera.position.y = -2;
 camera.rotation.y = 0;
 
-
-/* // Setup background scene
-loader.load(
-            `clen.fbx`,
-            (object) => {
-                object.scale.set(0.1, 0.1, 0.1)
-                scene.add(object)
-                object.rotation.y = 1.5
-                object.position.x = 22
-                object.position.y = -6
-                object.position.z = -6
-            },
-            () => {},
-            (error) => {
-                console.log(error)
-        });
-
-loader.load(
-            `clen.fbx`,
-            (object) => {
-                object.scale.set(0.1, 0.1, 0.1)
-                scene.add(object)
-                object.rotation.y = -2
-                object.position.x = -3
-                object.position.y = -6
-                object.rotation.x = .1
-            },
-            () => {},
-            (error) => {
-                console.log(error)
-        });
- */
 const textureLoader = new THREE.TextureLoader();
 
 const cardTexture = textureLoader.load('card_assets/Card Back.jpeg')
@@ -352,7 +199,6 @@ function objectOnClick() {
         if (picker < 2) {
             intersects[0].object.userData.alreadyPicked = true
             flipsPlayed[picker] = {cardID : intersects[0].object.userData.cardID, object: intersects[0], alreadyPicked : true}
-            // intersects[0].object.rotation.y += 3.3
             gsap.to(intersects[0].object.rotation, {
                 y: Math.PI / 180 * 180,
                 duration: 0.4
@@ -369,12 +215,6 @@ function objectOnClick() {
 
                         scene.remove(flipsPlayed[i].object)
                         flipsPlayed[i].object.object.position.x += 1000000000
-                    //     flipsPlayed[i].object.traverse((child) => {
-                    //         if (child.isMesh) [
-                    //             scene.remove(child)
-                    //         ]
-                    //     }
-                    // )
                         flipsPlayed[i].object = ''
                         flipsPlayed[i].cardID = ''
                         flipsPlayed[i].alreadyPicked = false
@@ -404,46 +244,7 @@ function objectOnClick() {
             
         
         }
-        // if (flipsPlayed[0].cardID == flipsPlayed[1].cardID) {
-        //     for (let i = 0; i < flipsPlayed.length; i++) {
-        //         scene.remove(flipsPlayed[i])
-        //         flipsPlayed[i].object = ''
-        //     }
-            
-        //     for (let i = 0; i < flipsPlayed.length; i++) {
-                
-        //     }
-        // }
-        // else {
-        //     for (let i = 0; i < flipsPlayed.length; i++) {
-        //         flipsPlayed[i].cardID = ''
-        //         flipsPlayed[i].alreadyPicked = false
-        //         // intersects[i].object.object.rotation.x += 0.4
-        //     }
-        // };
 
-        // if (picker < 2) {
-        //     flipsPlayed[picker] = {cardID : intersects[0].object.userData.cardID, object: intersects[0]}
-        //     console.log(`stored card data: ${flipsPlayed[0].cardID}, ${flipsPlayed[1].cardID}, and current picker index is ${picker}`)
-        //     picker++
-        //     if ((flipsPlayed[0].cardID == flipsPlayed[1].cardID) && (picker === 1)) {
-        //         console.log('orking')
-        //         console.log(flipsPlayed[1])
-        //         scene.remove(flipsPlayed[1].object)
-        //         scene.remove(flipsPlayed[0].object)
-        //         picker = 0
-        //         for (let i = 0; i < flipsPlayed.length; i++) {
-        //         flipsPlayed[i] = ''
-        //         }
-        //     }
-        //     if (picker === 1) {
-                
-        //     }
-            
-        // }
-        // else {
-        //     picker = 0
-        // }
         }
     else {
         console.log('invalid')
@@ -468,30 +269,8 @@ function winScreen() {
     winScreenRef.style = `display: block; pointer-events: all;`
 }
 
-
-
-
-
-
 // setup clock system
 const clockSystem = new THREE.Clock()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 window.addEventListener('click', calculatePointerPosition)
