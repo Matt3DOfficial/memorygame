@@ -139,25 +139,28 @@ function createCards() {
 // createCards function is then run
 createCards();
 
-scene.background = new THREE.Color( 'rgba(189, 122, 93, 1)' );
 const directionalLight = new THREE.DirectionalLight('rgba(255, 255, 255, 1)', 1, 0);
 const ambientLight = new THREE.AmbientLight('rgba(255, 255, 255, 1)', 100, 0);
-directionalLight.position.set(10, 10, 10);
-scene.add(directionalLight);
-scene.add(ambientLight);
 
-camera.position.z = 5;
-camera.position.x = 8;
-camera.position.y = -2;
-camera.rotation.y = 0;
+function positionCamera() {
+    camera.position.z = 5;
+    camera.position.x = 8;
+    camera.position.y = -2;
+    camera.rotation.y = 0;
+};
+function setupLighting() {
+    scene.background = new THREE.Color( 'rgba(189, 122, 93, 1)' );
+    directionalLight.position.set(10, 10, 10);
+    scene.add(directionalLight);
+    scene.add(ambientLight);
+}
+setupLighting();
+positionCamera();
 
 // Setup raycasting and click events
 const flipsDOM = document.getElementById("flips")
 const timerDOM = document.getElementById("timer")
-const timer = new THREE.Timer();
 let flipCounter = 0
-let successfullFlips = 0
-let timeCounter = 0
 
 const rayCaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -245,16 +248,14 @@ function winScreen() {
     winScreenRef.style = `display: block; pointer-events: all;`
 }
 
+window.addEventListener('click', calculatePointerPosition)
 // setup clock system
 const clockSystem = new THREE.Clock()
-
-window.addEventListener('click', calculatePointerPosition)
 clockSystem.start()
+// run animation loop (runs 60 frames per second)
 function animate() {
-    timerDOM.innerHTML = `timer: ${Math.floor(clockSystem.getElapsedTime())}`
-    renderer.render(scene, camera);
-    // testObject.rotation.x += 0.01
-    // testObject.rotation.y += 0.01
+    timerDOM.innerHTML = `timer: ${Math.floor(clockSystem.getElapsedTime())}` // timerDOM gets updated with the current time based on the clockSystem.getElapsedTime()
+    renderer.render(scene, camera); // renders the frame based off of the scene and camera variables
 };
-
+// run animation loop (runs 60 frames per second)
 renderer.setAnimationLoop(animate);
