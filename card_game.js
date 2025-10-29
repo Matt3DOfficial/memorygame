@@ -2,6 +2,8 @@
 import * as THREE from 'three';
 // import FBXLoader, part of THREE. FBXLoader allows the ability to load FBX models into the scene, and can then be added using scene.add(object)
 import { FBXLoader } from '/three.js-r180/examples/jsm/loaders/FBXLoader.js';
+import { HDRLoader } from '/three.js-r180/examples/jsm/loaders/HDRLoader.js';
+import { USDLoader } from '/three.js-r180/examples/jsm/loaders/USDLoader.js';
 // Below are a list of core technologies in THREE.JS used for rendering, animation, etc.
 // scene is used for importing models into the scene, change of scene, etc.
 const scene = new THREE.Scene();
@@ -154,6 +156,8 @@ createCards();
 
 const directionalLight = new THREE.DirectionalLight('rgba(255, 255, 255, 1)', 1, 0);
 const ambientLight = new THREE.AmbientLight('rgba(255, 255, 255, 1)', 100, 0);
+const hdrLoader = new HDRLoader()
+const hdrTexture = hdrLoader.load('night_bridge_4k.hdr')
 
 function positionCamera() {
     camera.position.z = 5;
@@ -166,6 +170,10 @@ function setupLighting() {
     directionalLight.position.set(10, 10, 10);
     scene.add(directionalLight);
     scene.add(ambientLight);
+    scene.background = hdrTexture;
+    scene.environment = hdrTexture;
+    // scene.environment.mapping = THREE.EquirectangularReflectionMapping;
+    scene.backgroundBlurriness = 1;
 }
 setupLighting();
 positionCamera();
@@ -219,6 +227,7 @@ function objectOnClick() {
                         picker = 0;
                     }
                     else {
+                        // resetCards();
                         console.log("reseting cards")
                         setTimeout
                         (() => {for (let i = 0; i < flipsPlayed.length; i++) {
@@ -256,6 +265,31 @@ buttonRef.addEventListener('click', () => {
 function winScreen() {
     winScreenRef.style = `display: block; pointer-events: all;`
 }
+// const oldBar = 'old_bar_2.fbx'
+// const oldBarModel = loader.load(
+//     oldBar,
+//     (object) => {
+//         object.scale.set(1, 1, 1)
+//         object.position.x = 10
+//         object.position.z = 14
+//         object.position.y = -10
+//         object.rotation.y = Math.PI / 180 * -80
+// /*         object.position.z = -5
+//         object.rotation.y = Math.PI / 180 * 180
+//         object.rotation.z = -1
+//         object.traverse((child) => {
+//             if (child.isMesh) [
+//                 child.userData = {isCard : true, alreadyPicked : false, cardID: randomCardAsset}
+//             ]
+//         }) */
+//         scene.add(object)
+//         return object
+
+//     },
+//     () => {},
+//     (error) => {
+//         console.log(error)
+// });
 
 window.addEventListener('click', calculatePointerPosition)
 // setup clock system
