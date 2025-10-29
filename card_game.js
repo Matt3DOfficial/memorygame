@@ -16,13 +16,21 @@ document.body.appendChild(renderer.domElement);
 // setup FBXLoader function, for loading FBX card models in the for loop
 const loader = new FBXLoader();
 // cards amount is used for the amount of cards created. there are issues with the recursive functions i used in the loop, which causes a call stack error because it runs too many times. So for now, stick with batches of 10.
-const cardsAmount = 20;
+let cardsAmount = 6;
 // the flipGoal value, when initialized determines the value of total successful card flips of two required.
-const flipGoal = cardsAmount / 2;
+let flipGoal = cardsAmount / 2;
 // cardColumnnsAmount is used for the amount of columns of cards in the scene, this doesn't change the amount of cards, cardsAmount variable does this beforehand and is calculated with this variable.
 const cardColumnsAmount = 2;
 // cardRowAmount is calculated based off the division of both cardsAmount and cardColumnsAmount, which calculate how many cards are needed on each row programmaticaly.
-const cardRowAmount = cardsAmount / cardColumnsAmount;
+let cardRowAmount = cardsAmount / cardColumnsAmount;
+function cardsChecker() {
+    if ((cardRowAmount % 2) === 1) {
+        cardsAmount += 2
+        flipGoal = cardsAmount / 2
+        cardRowAmount = cardsAmount / cardColumnsAmount;
+    };
+};
+cardsChecker();
 // the list cardArray is made based off of the amount of cards needed in the cardsAmount variable.
 const cardArray = new Array(cardsAmount);
 // cardAssets is a list of object literals with the fileName property in each index, in which the string value of each is a .fbx file, which is used for the FBXLoader to load the file into the scene.
@@ -62,6 +70,10 @@ const cardAnimsLibrary = {
             y: Math.PI / 180 * 0, // Math.PI divided by 180 is used for the calculation of degrees of rotation of a model. this is then multiplied by what ever degree of rotation desired.
             duration: 0.4 // duration changes the amount of time of the animation
         })
+    },
+
+    endCardAnim : (modelName) => {
+        gsap.to(modelName)
     }
 };
 // createCards creates the cards from the variables cardsAmount, cardColumnsAmount, cardRowAmount, cardArray and cardAssets
@@ -101,6 +113,7 @@ function createCards() {
             const randomCardAssetIndex = Math.floor(Math.random() * cardAssets.length);
             const randomCardAsset = cardAssets[randomCardAssetIndex].fileName;
             for (let i = 0; i < 2; i ++) {
+                // recursive function that makes a random number between 0 and the total length of the cardArray, it then checks if that index has already been stored with a random card, if true, then the function will re run. you might be wondering about the callstack overflowing because of the function re running if there are no empty spaces, but that wont happen since we are only running the function for the length of the array, and no more, so there wont be any issues since there will be an empty space when the function is run
                 function insertRandomCard() {
                     const randomCardIndex = Math.floor(Math.random() * cardArray.length);
                     if (cardArray[randomCardIndex].otherProperties.isNotEmpty) {
@@ -181,55 +194,51 @@ function objectOnClick() {
     rayCaster.setFromCamera(pointer, camera);
 
     const intersects = rayCaster.intersectObjects(scene.children);
-    console.log(`${intersects[0].object.userData.isCard} ${intersects[0].object.userData.alreadyPicked}`)
+    if (0 < intersects.length) {
+        if ((intersects[0].object.userData.isCard) && (!intersects[0].object.userData.alreadyPicked) && ((!flipsPlayed[0].alreadyPicked) || (!flipsPlayed[1].alreadyPicked))) {
+            if (picker < 2) {
+                intersects[0].object.userData.alreadyPicked = true
+                flipsPlayed[picker] = {cardID : intersects[0].object.userData.cardID, object: intersects[0], alreadyPicked : true}
+                cardAnimsLibrary.cardFlipFromBack(intersects[0].object);
+                picker++
+                if (picker === 2) {
+                    if (flipsPlayed[0].cardID == flipsPlayed[1].cardID) {
+                        flipCounter++
+                        flipsDOM.innerHTML = `flips: ${flipCounter}`;
+                        setTimeout(() => {for (let i = 0; i < flipsPlayed.length; i++) {
+                            scene.remove(flipsPlayed[i].object)
+                            flipsPlayed[i].object.object.position.x += 1000000000
+                            flipsPlayed[i].object = ''
+                            flipsPlayed[i].cardID = ''
+                            flipsPlayed[i].alreadyPicked = false
+                        };}, 2000)
 
-    if ((0 < intersects.length) && (intersects[0].object.userData.isCard) && (!intersects[0].object.userData.alreadyPicked) && ((!flipsPlayed[0].alreadyPicked) || (!flipsPlayed[1].alreadyPicked))) {
-        console.log(`working`)
-        console.log(intersects[0].object)
-
-        if (picker < 2) {
-            intersects[0].object.userData.alreadyPicked = true
-            flipsPlayed[picker] = {cardID : intersects[0].object.userData.cardID, object: intersects[0], alreadyPicked : true}
-            cardAnimsLibrary.cardFlipFromBack(intersects[0].object);
-            picker++
-            if (picker === 2) {
-                console.log("run")
-                if (flipsPlayed[0].cardID == flipsPlayed[1].cardID) {
-                    flipCounter++
-                    flipsDOM.innerHTML = `flips: ${flipCounter}`;
-                    setTimeout(() => {for (let i = 0; i < flipsPlayed.length; i++) {
-                        scene.remove(flipsPlayed[i].object)
-                        flipsPlayed[i].object.object.position.x += 1000000000
-                        flipsPlayed[i].object = ''
-                        flipsPlayed[i].cardID = ''
-                        flipsPlayed[i].alreadyPicked = false
-                    };}, 2000)
-
-                    if (flipCounter === flipGoal) {
-                        winScreen();
-                    };
-                    picker = 0;
+                        if (flipCounter === flipGoal) {
+                            winScreen();
+                        };
+                        picker = 0;
+                    }
+                    else {
+                        console.log("reseting cards")
+                        setTimeout
+                        (() => {for (let i = 0; i < flipsPlayed.length; i++) {
+                            flipsPlayed[i].cardID = ''
+                            flipsPlayed[i].alreadyPicked = false
+                            flipsPlayed[i].object.object.userData.alreadyPicked = false
+                            cardAnimsLibrary.cardFlipFromFront(flipsPlayed[i].object.object);
+                        };}, 2000)
+                        picker = 0
+                    };  
                 }
-                else {
-                    console.log("reseting cards")
-                    setTimeout
-                    (() => {for (let i = 0; i < flipsPlayed.length; i++) {
-                        flipsPlayed[i].cardID = ''
-                        flipsPlayed[i].alreadyPicked = false
-                        flipsPlayed[i].object.object.userData.alreadyPicked = false
-                        cardAnimsLibrary.cardFlipFromFront(flipsPlayed[i].object.object);
-                    };}, 2000)
-                    picker = 0
-                };  
-            }
+                
             
-        
-        }
+            }
 
-        }
-    else {
-        console.log('invalid')
-    }
+            }
+        else {
+            console.log('invalid')
+        };
+    };
 };
 
 const winScreenRef = document.getElementById(`win_screen`)
