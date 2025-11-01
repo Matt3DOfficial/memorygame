@@ -1,3 +1,17 @@
+// Features/Fixes Needed To Add in 12 hours; 
+// learn fundamentals of node.js and npm etc for packaging game
+// fix/learn loading animations, and promises and async/await for cleaner loading and card start animations.
+// fix horrible lighting and weird emissiveness on cards which make them unreadable, and get HDRI working fully. make lighting look good
+// learn CSS and fix UI going offcenter and make it look cleaner, for the score HTML and three.js renderer
+// make 3D background scene
+// optimise all 3D models, textures and logic
+// fix low resolution issues and offcentering in THREE
+// cleanup folders and files
+// learn how to make technical docummentation, and how people make it on GitHub, and make technical docummentation in README.md file
+// submit assignment
+
+
+
 // import three library for 3D
 import * as THREE from 'three';
 // import FBXLoader, part of THREE. FBXLoader allows the ability to load FBX models into the scene, and can then be added using scene.add(object)
@@ -73,7 +87,7 @@ const cardAnimsLibrary = {
             duration: 0.4 // duration changes the amount of time of the animation
         })
     },
-
+    // WIP Animation
     endCardAnim : (modelName) => {
         gsap.to(modelName)
     }
@@ -115,9 +129,11 @@ function createCards() {
             const randomCardAssetIndex = Math.floor(Math.random() * cardAssets.length);
             const randomCardAsset = cardAssets[randomCardAssetIndex].fileName;
             for (let i = 0; i < 2; i ++) {
-                // recursive function that makes a random number between 0 and the total length of the cardArray, it then checks if that index has already been stored with a random card, if true, then the function will re run. you might be wondering about the callstack overflowing because of the function re running if there are no empty spaces, but that wont happen since we are only running the function for the length of the array, and no more, so there wont be any issues since there will be an empty space when the function is run
+                // recursive function that generates a random number between 0 and the total length of the cardArray using JavaScript's built-in Psuedo Random Number Generator, it then checks if that index has already been stored with a random card, if true, then the function will re run. you might be wondering about the callstack overflowing because of the function re running if there are no empty spaces, but that wont happen since we are only running the function for the length of the array, and no more, so there wont be any issues since there will be an empty space when the function is run
                 function insertRandomCard() {
+                    // function Math.floor() is run, which rounds the target number down to the nearest integer, this targets the Math.random(), which generates a random number between 0 and 1, we then multiply the result with the length of the array cardArray, which is calculated from the cardsAmount variable, this is done so that we generate a valid integer, which will be used to index in the cardArray itself, we calculate this.length, aka cardArray.length, because we want to choose a random index within the 0 and the length of the array.
                     const randomCardIndex = Math.floor(Math.random() * cardArray.length);
+                    // an if statement with the condition of the index being not empty as true being ran, this condition is formulated as false before the recursive function ran on line 92, which initialises the object literals property as false, however if randomCardIndex runs, using the same value previously been run in the function, that index's isNotEmpty will be read as true, which then the function will run itself again, this is known as recursion which means the function will keep running until it solves the problem, in this case we want to fill all of the items in the list.
                     if (cardArray[randomCardIndex].otherProperties.isNotEmpty) {
                         insertRandomCard();
                     }
@@ -139,7 +155,7 @@ function createCards() {
                                 cardAnimsLibrary.startCardAnim(object, cardArray[randomCardIndex].posProperties.positionX, cardArray[randomCardIndex].posProperties.positionY);
                                 cardArray[randomCardIndex].otherProperties.object = object
                             },
-                            () => {},
+                            undefined, // undefined is used here to omit this useless optional parameter for my use case.
                             (error) => {
                                 console.log(error)
                         });
@@ -154,17 +170,19 @@ function createCards() {
 // createCards function is then run
 createCards();
 
-const directionalLight = new THREE.DirectionalLight('rgba(255, 255, 255, 1)', 1, 0);
-const ambientLight = new THREE.AmbientLight('rgba(255, 255, 255, 1)', 100, 0);
-const hdrLoader = new HDRLoader()
-const hdrTexture = hdrLoader.load('night_bridge_4k.hdr')
-
+// position camera manually, in the future i will maybe make a function that automatically calculates the position to be in based on the amount of cards, and the amount of columns
 function positionCamera() {
     camera.position.z = 5;
     camera.position.x = 8;
     camera.position.y = -2;
     camera.rotation.y = 0;
 };
+
+// load lighting and high definition range image (still broken)
+const directionalLight = new THREE.DirectionalLight('rgba(255, 255, 255, 1)', 1, 0);
+const ambientLight = new THREE.AmbientLight('rgba(255, 255, 255, 1)', 100, 0);
+const hdrLoader = new HDRLoader()
+const hdrTexture = hdrLoader.load('night_bridge_4k.hdr')
 function setupLighting() {
     scene.background = new THREE.Color( 'rgba(189, 122, 93, 1)' );
     directionalLight.position.set(10, 10, 10);
@@ -182,7 +200,6 @@ positionCamera();
 const flipsDOM = document.getElementById("flips")
 const timerDOM = document.getElementById("timer")
 let flipCounter = 0
-
 const rayCaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
@@ -198,6 +215,7 @@ for (let i = 0; i < 2; i++) {
 }
 
 let picker = 0
+// function runs inside of the eventlistener "click", which detects
 function objectOnClick() {
     rayCaster.setFromCamera(pointer, camera);
 
@@ -226,8 +244,8 @@ function objectOnClick() {
                         };
                         picker = 0;
                     }
+                    // resets cards
                     else {
-                        // resetCards();
                         console.log("reseting cards")
                         setTimeout
                         (() => {for (let i = 0; i < flipsPlayed.length; i++) {
