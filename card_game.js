@@ -1,24 +1,19 @@
-// Features/Fixes Needed To Add in 12 hours; 
-// learn fundamentals of node.js and npm etc for packaging game
-// fix/learn loading animations, and promises and async/await for cleaner loading and card start animations.
-// fix horrible lighting and weird emissiveness on cards which make them unreadable, and get HDRI working fully. make lighting look good
-// learn CSS and fix UI going offcenter and make it look cleaner, for the score HTML and three.js renderer
-// make 3D background scene
-// optimise all 3D models, textures and logic
-// fix low resolution issues and offcentering in THREE
-// cleanup folders and files
-// learn how to make technical docummentation, and how people make it on GitHub, and make technical docummentation in README.md file
-// submit assignment
-
-
+/*********************************************
+ * Author: Mahsun Parmanbek
+ * Version: 1.0
+ * Date: 11/11/2025
+ * File: card_game.js
+ * Note: A snap card game in 3D
+ * *******************************************
+ */
 
 // import three library for 3D
 import * as THREE from 'three';
 // import FBXLoader, part of THREE. FBXLoader allows the ability to load FBX models into the scene, and can then be added using scene.add(object)
 import { FBXLoader } from '/three.js-r180/examples/jsm/loaders/FBXLoader.js';
 import { HDRLoader } from '/three.js-r180/examples/jsm/loaders/HDRLoader.js';
-import { TextGeometry } from '/three.js-r180/examples/jsm/geometries/TextGeometry.js';
-import { FontLoader } from '/three.js-r180/examples/jsm/loaders/FontLoader.js';
+// import { TextGeometry } from '/three.js-r180/examples/jsm/geometries/TextGeometry.js';
+// import { FontLoader } from '/three.js-r180/examples/jsm/loaders/FontLoader.js';
 // import { USDLoader } from '/three.js-r180/examples/jsm/loaders/USDLoader.js'; // DEPRECEATED
 // Below are a list of core technologies in THREE.JS used for rendering, animation, etc.
 // scene is used for importing models into the scene, change of scene, etc.
@@ -41,14 +36,6 @@ let flipGoal = cardsAmount / 2;
 const cardColumnsAmount = 3;
 // cardRowAmount is calculated based off the division of both cardsAmount and cardColumnsAmount, which calculate how many cards are needed on each row programmaticaly.
 let cardRowAmount = cardsAmount / cardColumnsAmount;
-function cardsChecker() {
-    if ((cardRowAmount % 2) === 1) {
-        cardsAmount += 2
-        flipGoal = cardsAmount / 2
-        cardRowAmount = cardsAmount / cardColumnsAmount;
-    };
-};
-cardsChecker();
 // the list cardArray is made based off of the amount of cards needed in the cardsAmount variable.
 const cardArray = new Array(cardsAmount);
 // cardAssets is a list of object literals with the fileName property in each index, in which the string value of each is a .fbx file, which is used for the FBXLoader to load the file into the scene.
@@ -56,6 +43,12 @@ const cardAssets = [{fileName : 'Battle_Ox.fbx'}, {fileName : 'Mesmeric_Control.
 // Card Animations Library (cardAnimsLibrary), is used for the organisation of the card animations using the GSAP JavaScript animation library.
 const cardAnimsLibrary = {
     // startCardAnim object moves a card to a new X and Y position, based on the function parameters, and uses modelName parameter for the model the animation will inflict.
+    /**
+     * 
+     * @param {string} modelName 
+     * @param {number} newPosX 
+     * @param {number} newPosY 
+     */
     startCardAnim : (modelName, newPosX, newPosY) => {
         // gsap.to() uses the first parameter, which determines the objects value that it is changing, and then a CSS style list of properties determine the final value and duration of the animation
         gsap.to(modelName.position, {
@@ -74,6 +67,10 @@ const cardAnimsLibrary = {
         })
     },
     // cardFlipFromBack property changes the Y rotation of the model, in this case the card FBX model by the Y rotation by 180 degrees from the back to the front
+    /**
+     * 
+     * @param {string} modelName 
+     */
     cardFlipFromBack : (modelName) => {
         // gsap.to() uses the first parameter, which determines the objects value that it is changing, and then a CSS style list of properties determine the final value and duration of the animation
         gsap.to(modelName.rotation, {
@@ -82,6 +79,10 @@ const cardAnimsLibrary = {
         })
     },
     // cardFlipFromBack property changes the Y rotation of the model, in this case the card FBX model by the Y rotation by 0 degrees from the front to the back
+    /**
+     * 
+     * @param {string} modelName 
+     */
     cardFlipFromFront : (modelName) => {
         // gsap.to() uses the first parameter, which determines the objects value that it is changing, and then a CSS style list of properties determine the final value and duration of the animation
         gsap.to(modelName.rotation, {
@@ -90,6 +91,10 @@ const cardAnimsLibrary = {
         })
     },
     // WIP Animation
+    /**
+     * 
+     * @param {string} modelName 
+     */
     endCardAnim : (modelName) => {
         gsap.to(modelName)
     }
@@ -172,7 +177,7 @@ function createCards() {
     };
 };
 // createCards function is then run
-// createCards();
+createCards();
 
 // position camera manually, in the future i will maybe make a function that automatically calculates the position to be in based on the amount of cards, and the amount of columns
 function positionCamera() {
@@ -316,7 +321,7 @@ function winScreen() {
 //         console.log(error)
 // });
 
-document.getElementById(`container`).style = 'pointer-events: all;'
+/* document.getElementById(`container`).style = 'pointer-events: all;'
 document.getElementById(`container`).style = 'display: none;'
 const fontLoader = new FontLoader();
 const font = await fontLoader.loadAsync('3d-font.json');
@@ -333,8 +338,8 @@ console.log(textMaterial)
 const menuText = new THREE.Mesh(textGeometry, textMaterial);
 scene.add(menuText)
 menuText.position.x = -80
-menuText.position.y = 10
-menuText.position.z = -70
+menuText.position.y = 100
+menuText.position.z = -70 */
 
 window.addEventListener('click', calculatePointerPosition)
 // setup clock system
@@ -342,7 +347,7 @@ const clockSystem = new THREE.Clock()
 clockSystem.start()
 // run animation loop (runs 60 frames per second)
 function animate() {
-    menuText.rotation.x += 0.01
+    // menuText.rotation.x += 0.01
     timerDOM.innerHTML = `timer: ${Math.floor(clockSystem.getElapsedTime())}` // timerDOM gets updated with the current time based on the clockSystem.getElapsedTime()
     renderer.render(scene, camera); // renders the frame based off of the scene and camera variables
 };
