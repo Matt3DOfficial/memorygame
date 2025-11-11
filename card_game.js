@@ -17,7 +17,9 @@ import * as THREE from 'three';
 // import FBXLoader, part of THREE. FBXLoader allows the ability to load FBX models into the scene, and can then be added using scene.add(object)
 import { FBXLoader } from '/three.js-r180/examples/jsm/loaders/FBXLoader.js';
 import { HDRLoader } from '/three.js-r180/examples/jsm/loaders/HDRLoader.js';
-import { USDLoader } from '/three.js-r180/examples/jsm/loaders/USDLoader.js';
+import { TextGeometry } from '/three.js-r180/examples/jsm/geometries/TextGeometry.js';
+import { FontLoader } from '/three.js-r180/examples/jsm/loaders/FontLoader.js';
+// import { USDLoader } from '/three.js-r180/examples/jsm/loaders/USDLoader.js'; // DEPRECEATED
 // Below are a list of core technologies in THREE.JS used for rendering, animation, etc.
 // scene is used for importing models into the scene, change of scene, etc.
 const scene = new THREE.Scene();
@@ -32,11 +34,11 @@ document.body.appendChild(renderer.domElement);
 // setup FBXLoader function, for loading FBX card models in the for loop
 const loader = new FBXLoader();
 // cards amount is used for the amount of cards created. there are issues with the recursive functions i used in the loop, which causes a call stack error because it runs too many times. So for now, stick with batches of 10.
-let cardsAmount = 6;
+let cardsAmount = 30;
 // the flipGoal value, when initialized determines the value of total successful card flips of two required.
 let flipGoal = cardsAmount / 2;
 // cardColumnnsAmount is used for the amount of columns of cards in the scene, this doesn't change the amount of cards, cardsAmount variable does this beforehand and is calculated with this variable.
-const cardColumnsAmount = 2;
+const cardColumnsAmount = 3;
 // cardRowAmount is calculated based off the division of both cardsAmount and cardColumnsAmount, which calculate how many cards are needed on each row programmaticaly.
 let cardRowAmount = cardsAmount / cardColumnsAmount;
 function cardsChecker() {
@@ -137,7 +139,9 @@ function createCards() {
                     if (cardArray[randomCardIndex].otherProperties.isNotEmpty) {
                         insertRandomCard();
                     }
+                    // this stack of logic runs on the condition of the index being empty
                     else {
+                        // we apply properties to the index's otherProperties property
                         cardArray[randomCardIndex].otherProperties = {isNotEmpty : true, fileName : randomCardAsset, object : ''}
                         loader.load(
                             `card_assets/${randomCardAsset}`,
@@ -168,7 +172,7 @@ function createCards() {
     };
 };
 // createCards function is then run
-createCards();
+// createCards();
 
 // position camera manually, in the future i will maybe make a function that automatically calculates the position to be in based on the amount of cards, and the amount of columns
 function positionCamera() {
@@ -268,17 +272,20 @@ function objectOnClick() {
     };
 };
 
-const winScreenRef = document.getElementById(`win_screen`)
-const buttonRef = document.getElementById(`play_again_button`)
-buttonRef.addEventListener('click', () => {
+const winScreenRef = document.getElementById(`win_screen`) // gets the win screen div
+const buttonRef = document.getElementById(`play_again_button`) // gets the button inside of the win screen div
+// when the play_again_button is clicked, a NAMED(CHANGE THIS) function is run, it sets the display of the win_screen to none, turns off pointer events, resets the flipCounter variable, resets the clockSystem, and restarts the game by calling createCards()
+function resetGame() {
     winScreenRef.style = `display: none; pointer-events: none;`;
     flipCounter = 0;
     flipsDOM.innerHTML = `flips: ${flipCounter}`;
     clockSystem.stop();
     clockSystem.start();
     createCards();
+}
+buttonRef.addEventListener('click', () => {
+    resetGame()
 })
-
 // function shows win screen, with a play again button
 function winScreen() {
     winScreenRef.style = `display: block; pointer-events: all;`
@@ -309,14 +316,45 @@ function winScreen() {
 //         console.log(error)
 // });
 
+document.getElementById(`container`).style = 'pointer-events: all;'
+document.getElementById(`container`).style = 'display: none;'
+const fontLoader = new FontLoader();
+const font = await fontLoader.loadAsync('3d-font.json');
+const textGeometry = new TextGeometry('matts memory game :) ', {
+    font: font,
+    size: 10,
+    depth: 2,
+    curveSegments: 100
+});
+const textMaterial = new THREE.MeshStandardMaterial({    
+    color : 'rgba(255, 0, 0, 1)'
+});
+console.log(textMaterial)
+const menuText = new THREE.Mesh(textGeometry, textMaterial);
+scene.add(menuText)
+menuText.position.x = -80
+menuText.position.y = 10
+menuText.position.z = -70
+
 window.addEventListener('click', calculatePointerPosition)
 // setup clock system
 const clockSystem = new THREE.Clock()
 clockSystem.start()
 // run animation loop (runs 60 frames per second)
 function animate() {
+    menuText.rotation.x += 0.01
     timerDOM.innerHTML = `timer: ${Math.floor(clockSystem.getElapsedTime())}` // timerDOM gets updated with the current time based on the clockSystem.getElapsedTime()
     renderer.render(scene, camera); // renders the frame based off of the scene and camera variables
 };
 // run animation loop (runs 60 frames per second)
+
+/* function main() {
+    createCards();
+    setupLighting();
+    positionCamera();
+    window.addEventListener('click', calculatePointerPosition);
+    clockSystem.start();
+    renderer.setAnimationLoop(animate);
+} */
+
 renderer.setAnimationLoop(animate);

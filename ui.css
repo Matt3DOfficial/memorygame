@@ -86,3 +86,9 @@ body {
   position: absolute;
   background-image: radial-gradient(29% 72% at 92% 12%, #FFFF 23%, #ff0000 100%);
 } */
+
+.main_menu {
+  background-color: white;
+  border-color: black;
+  border-radius: 5vb;
+}

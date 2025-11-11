@@ -18,13 +18,24 @@
 <body>
     <script type="module" src="card_game.js"></script>
     <div id="container">
-      <div id="score">
+      <div id="score"style="display: none;">
         <div id="timer">timer:</div>
         <div id="flips">flips:</div>
       </div>
       <div id="win_screen" style="display: none;">
         <h1>won</h1>
         <input type="button" value="play again" id="play_again_button">
+      </div>
+      <div class="main_menu" style="display: flex; flex-direction: column; width: 20vw; height: 100vh;">
+        <button class="play">
+          play
+        </button>
+        <button class="options">
+          options
+        </button>
+        <button class="quit">
+          quit
+        </button>
       </div>
     </div>
 </body>
