@@ -45,9 +45,9 @@ const cardAnimsLibrary = {
     // startCardAnim object moves a card to a new X and Y position, based on the function parameters, and uses modelName parameter for the model the animation will inflict.
     /**
      * 
-     * @param {string} modelName 
-     * @param {number} newPosX 
-     * @param {number} newPosY 
+     * @param {string} modelName Mesh value/name, to be transformed in the animation.
+     * @param {number} newPosX The new position the mesh will be at the end of the animation
+     * @param {number} newPosY The new position the mesh will be at the end of the animation
      */
     startCardAnim : (modelName, newPosX, newPosY) => {
         // gsap.to() uses the first parameter, which determines the objects value that it is changing, and then a CSS style list of properties determine the final value and duration of the animation
@@ -69,7 +69,7 @@ const cardAnimsLibrary = {
     // cardFlipFromBack property changes the Y rotation of the model, in this case the card FBX model by the Y rotation by 180 degrees from the back to the front
     /**
      * 
-     * @param {string} modelName 
+     * @param {string} modelName Mesh value/name, to be transformed in the animation.
      */
     cardFlipFromBack : (modelName) => {
         // gsap.to() uses the first parameter, which determines the objects value that it is changing, and then a CSS style list of properties determine the final value and duration of the animation
@@ -81,7 +81,7 @@ const cardAnimsLibrary = {
     // cardFlipFromBack property changes the Y rotation of the model, in this case the card FBX model by the Y rotation by 0 degrees from the front to the back
     /**
      * 
-     * @param {string} modelName 
+     * @param {string} modelName Mesh value/name, to be transformed in the animation.
      */
     cardFlipFromFront : (modelName) => {
         // gsap.to() uses the first parameter, which determines the objects value that it is changing, and then a CSS style list of properties determine the final value and duration of the animation
@@ -93,7 +93,7 @@ const cardAnimsLibrary = {
     // WIP Animation
     /**
      * 
-     * @param {string} modelName 
+     * @param {string} modelName Mesh value/name, to be transformed in the animation.
      */
     endCardAnim : (modelName) => {
         gsap.to(modelName)
